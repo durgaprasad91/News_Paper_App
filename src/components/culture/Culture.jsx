@@ -11,13 +11,18 @@ const Culture = ({ cultureData, setCultureData }) => {
     fetch(cultureApiUrl)
       .then((response) => response.json())
       .then((data) => {
-        const newsWithImages = data.articles.filter(
-          (item) => item.urlToImage
-        );
-        setCultureData(newsWithImages);
+        if (data.articles) {
+          const newsWithImages = data.articles.filter(
+            (item) => item.urlToImage
+          );
+          setCultureData(newsWithImages);
+        } else {
+          console.error("No 'articles' property found in the API response:", data);
+        }
       })
       .catch((error) => console.error("Error fetching culture data:", error));
   }, [setCultureData]);
+  
 
   const handleImageError = (index) => {
     const updatedCultureData = [...cultureData];
