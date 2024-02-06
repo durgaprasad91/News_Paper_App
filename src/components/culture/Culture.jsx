@@ -9,7 +9,7 @@ const Culture = ({ cultureData, setCultureData }) => {
     fetch(cultureApiUrl)
       .then((response) => response.json())
       .then((data) => {
-        if (data && data.articles) {
+        if (data && data.articles && Array.isArray(data.articles)) {
           const newsWithImages = data.articles.filter(
             (item) => item.urlToImage
           );
@@ -39,7 +39,7 @@ const Culture = ({ cultureData, setCultureData }) => {
         <h1>Culture News</h1>
       </header>
       <div className="news-container">
-        {cultureData.length > 0 ? (
+        {cultureData && cultureData.length > 0 ? (
           cultureData.map((item, index) => (
             <div key={item.url} className="news-item">
               <div className="news-image">
