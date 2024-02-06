@@ -4,11 +4,11 @@ import React, { useState, useEffect } from "react";
 import "./culture.css";
 import { connect } from "react-redux";
 import { setCultureData } from "../../redux/action/action";
-import { cultureApiUrl } from "../../redux/API/api";
+import { bussinessApiUrl } from "../../redux/API/api";
 
 const Culture = ({ cultureData, setCultureData }) => {
   useEffect(() => {
-    fetch(cultureApiUrl)
+    fetch(bussinessApiUrl)
       .then((response) => response.json())
       .then((data) => {
         const newsWithImages = data.articles.filter(
