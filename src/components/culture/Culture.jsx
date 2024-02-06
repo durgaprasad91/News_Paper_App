@@ -11,20 +11,16 @@ const Culture = ({ cultureData, setCultureData }) => {
     fetch(cultureApiUrl)
       .then((response) => response.json())
       .then((data) => {
-        let newsWithImages;
+        console.log("Received data:", data);
 
-        if (data.articles) {
+        if (data && (data.articles || (data.data && Array.isArray(data.data)))) {
           // Use the default format if data.articles is present
-          newsWithImages = data.articles.filter((item) => item.urlToImage);
-        } else if (data.data && Array.isArray(data.data)) {
-          // Use an alternative format if data.data is present and is an array
-          newsWithImages = data.data.filter((item) => item.imageUrl);
+          // or if data.data is present and is an array
+          const newsWithImages = (data.articles || data.data).filter((item) => item.urlToImage);
+          setCultureData(newsWithImages);
         } else {
           console.error("Invalid API response format:", data);
-          return;
         }
-
-        setCultureData(newsWithImages);
       })
       .catch((error) => console.error("Error fetching culture data:", error));
   }, [setCultureData]);
