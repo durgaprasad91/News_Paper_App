@@ -1,5 +1,7 @@
-import React, { useEffect } from "react";
-import "./Culture.css"; // Make sure to adjust the CSS file path
+
+
+import React, { useState, useEffect } from "react";
+import "./culture.css";
 import { connect } from "react-redux";
 import { setCultureData } from "../../redux/action/action";
 import { cultureApiUrl } from "../../redux/API/api";
@@ -7,31 +9,15 @@ import { cultureApiUrl } from "../../redux/API/api";
 const Culture = ({ cultureData, setCultureData }) => {
   useEffect(() => {
     fetch(cultureApiUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
-        if (data && data.articles && Array.isArray(data.articles)) {
-          const cultureWithImages = data.articles.filter(
-            (item) => item.urlToImage
-          );
-          setCultureData(cultureWithImages);
-        } else {
-          console.error("Invalid data format received from the culture API.");
-          // Optionally, set cultureData to an empty array or handle the error state
-          setCultureData([]);
-        }
+        const newsWithImages = data.articles.filter(
+          (item) => item.urlToImage
+        );
+        setCultureData(newsWithImages);
       })
-      .catch((error) => {
-        console.error("Error fetching culture data:", error.message);
-        // Optionally, set cultureData to an empty array or handle the error state
-        setCultureData([]);
-      });
+      .catch((error) => console.error("Error fetching culture data:", error));
   }, [setCultureData]);
-
 
   const handleImageError = (index) => {
     const updatedCultureData = [...cultureData];
@@ -49,7 +35,7 @@ const Culture = ({ cultureData, setCultureData }) => {
         <h1>Culture News</h1>
       </header>
       <div className="news-container">
-        {cultureData && cultureData.length > 0 ? (
+        {cultureData.length > 0 ? (
           cultureData.map((item, index) => (
             <div key={item.url} className="news-item">
               <div className="news-image">

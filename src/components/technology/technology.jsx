@@ -1,40 +1,24 @@
-import React, { useEffect } from "react";
-import "./Technology.css"; // Make sure to adjust the CSS file path
+
+
+import React, { useState, useEffect } from "react";
+import "./technology.css";
 import { connect } from "react-redux";
 import { setTechnologyData } from "../../redux/action/action";
 import { technologyApiUrl } from "../../redux/API/api";
 
-const Technology = ({ technologyData, setTechnologyData }) => {
+const Technology = ({ techData, setTechnologyData }) => {
   useEffect(() => {
     fetch(technologyApiUrl)
-      .then((response) => {
-        if (response.status === 426) {
-          throw new Error("Upgrade Required: Please check the API key or server configuration.");
-        }
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
-        if (data && data.articles && Array.isArray(data.articles)) {
-          const technologyWithImages = data.articles.filter(
-            (item) => item.urlToImage
-          );
-          setTechnologyData(technologyWithImages);
-        } else {
-          console.error("Invalid data format received from the technology API.");
-          // Optionally, set technologyData to an empty array or handle the error state
-          setTechnologyData([]);
-        }
+        const newsWithImages = data.articles.filter(
+          (item) => item.urlToImage
+        );
+        setTechnologyData(newsWithImages);
       })
-      .catch((error) => {
-        console.error("Error fetching technology data:", error.message);
-        // Optionally, set technologyData to an empty array or handle the error state
-        setTechnologyData([]);
-      });
+      .catch((error) =>
+        console.error("Error fetching technology data:", error)
+      );
   }, [setTechnologyData]);
 
   const handleImageError = (index) => {
@@ -85,7 +69,7 @@ const Technology = ({ technologyData, setTechnologyData }) => {
 };
 
 const mapStateToProps = (state) => ({
-  technologyData: state.technology.technologyData,
+  techData: state.technology.techData,
 });
 
 const mapDispatchToProps = {

@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
-import "./Science.css"; // Make sure to adjust the CSS file path
+
+import React, { useState, useEffect } from "react";
+import "./science.css";
 import { connect } from "react-redux";
 import { setScienceData } from "../../redux/action/action";
 import { scienceApiUrl } from "../../redux/API/api";
@@ -7,36 +8,13 @@ import { scienceApiUrl } from "../../redux/API/api";
 const Science = ({ scienceData, setScienceData }) => {
   useEffect(() => {
     fetch(scienceApiUrl)
-      .then((response) => {
-        if (response.status === 426) {
-          throw new Error("Upgrade Required: Please check the API key or server configuration.");
-        }
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
-        if (data && data.articles && Array.isArray(data.articles)) {
-          const scienceWithImages = data.articles.filter(
-            (item) => item.urlToImage
-          );
-          setScienceData(scienceWithImages);
-        } else {
-          console.error("Invalid data format received from the science API.");
-          // Optionally, set scienceData to an empty array or handle the error state
-          setScienceData([]);
-        }
+        const newsWithImages = data.articles.filter((item) => item.urlToImage);
+        setScienceData(newsWithImages);
       })
-      .catch((error) => {
-        console.error("Error fetching science data:", error.message);
-        // Optionally, set scienceData to an empty array or handle the error state
-        setScienceData([]);
-      });
+      .catch((error) => console.error("Error fetching science data:", error));
   }, [setScienceData]);
-
 
   const handleImageError = (index) => {
     const updatedScienceData = [...scienceData];

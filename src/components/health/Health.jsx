@@ -1,7 +1,7 @@
 
 
-import React, { useEffect } from "react";
-import "./Health.css"; // Make sure to adjust the CSS file path
+import React, { useState, useEffect } from "react";
+import "./health.css";
 import { connect } from "react-redux";
 import { setHealthData } from "../../redux/action/action";
 import { healthApiUrl } from "../../redux/API/api";
@@ -9,29 +9,14 @@ import { healthApiUrl } from "../../redux/API/api";
 const Health = ({ healthData, setHealthData }) => {
   useEffect(() => {
     fetch(healthApiUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
-        if (data && data.articles && Array.isArray(data.articles)) {
-          const healthWithImages = data.articles.filter(
-            (item) => item.urlToImage
-          );
-          setHealthData(healthWithImages);
-        } else {
-          console.error("Invalid data format received from the health API.");
-          // Optionally, set healthData to an empty array or handle the error state
-          setHealthData([]);
-        }
+        const newsWithImages = data.articles.filter(
+          (item) => item.urlToImage
+        );
+        setHealthData(newsWithImages);
       })
-      .catch((error) => {
-        console.error("Error fetching health data:", error.message);
-        // Optionally, set healthData to an empty array or handle the error state
-        setHealthData([]);
-      });
+      .catch((error) => console.error("Error fetching health data:", error));
   }, [setHealthData]);
 
   const handleImageError = (index) => {
