@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from "react";
-import "./sports.css";
+import React, { useEffect } from "react";
+import "./Sports.css"; // Make sure to adjust the CSS file path
 import { connect } from "react-redux";
 import { setSportsData } from "../../redux/action/action";
 import { sportsApiUrl } from "../../redux/API/api";
@@ -8,15 +8,31 @@ import { sportsApiUrl } from "../../redux/API/api";
 const Sports = ({ sportsData, setSportsData }) => {
   useEffect(() => {
     fetch(sportsApiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        const newsWithImages = data.articles.filter(
-          (item) => item.urlToImage
-        );
-        setSportsData(newsWithImages);
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
       })
-      .catch((error) => console.error("Error fetching sports data:", error));
+      .then((data) => {
+        if (data && data.articles && Array.isArray(data.articles)) {
+          const sportsWithImages = data.articles.filter(
+            (item) => item.urlToImage
+          );
+          setSportsData(sportsWithImages);
+        } else {
+          console.error("Invalid data format received from the sports API.");
+          // Optionally, set sportsData to an empty array or handle the error state
+          setSportsData([]);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching sports data:", error.message);
+        // Optionally, set sportsData to an empty array or handle the error state
+        setSportsData([]);
+      });
   }, [setSportsData]);
+
 
   const handleImageError = (index) => {
     const updatedSportsData = [...sportsData];

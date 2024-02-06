@@ -1,24 +1,36 @@
 
-
-import React, { useState, useEffect } from "react";
-import "./technology.css";
+import React, { useEffect } from "react";
+import "./Technology.css"; // Make sure to adjust the CSS file path
 import { connect } from "react-redux";
 import { setTechnologyData } from "../../redux/action/action";
 import { technologyApiUrl } from "../../redux/API/api";
 
-const Technology = ({ techData, setTechnologyData }) => {
+const Technology = ({ technologyData, setTechnologyData }) => {
   useEffect(() => {
     fetch(technologyApiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        const newsWithImages = data.articles.filter(
-          (item) => item.urlToImage
-        );
-        setTechnologyData(newsWithImages);
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
       })
-      .catch((error) =>
-        console.error("Error fetching technology data:", error)
-      );
+      .then((data) => {
+        if (data && data.articles && Array.isArray(data.articles)) {
+          const technologyWithImages = data.articles.filter(
+            (item) => item.urlToImage
+          );
+          setTechnologyData(technologyWithImages);
+        } else {
+          console.error("Invalid data format received from the technology API.");
+          // Optionally, set technologyData to an empty array or handle the error state
+          setTechnologyData([]);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching technology data:", error.message);
+        // Optionally, set technologyData to an empty array or handle the error state
+        setTechnologyData([]);
+      });
   }, [setTechnologyData]);
 
   const handleImageError = (index) => {

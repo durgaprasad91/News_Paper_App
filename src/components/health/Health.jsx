@@ -34,6 +34,16 @@ const Health = ({ healthData, setHealthData }) => {
       });
   }, [setHealthData]);
 
+  const handleImageError = (index) => {
+    const updatedHealthData = [...healthData];
+
+    if (index >= 0 && index < updatedHealthData.length) {
+      const placeholderImageUrl = "https://picsum.photos/400/200";
+      updatedHealthData[index].urlToImage = placeholderImageUrl;
+      setHealthData(updatedHealthData);
+    }
+  };
+
   return (
     <div className="news-frame-app">
       <header>

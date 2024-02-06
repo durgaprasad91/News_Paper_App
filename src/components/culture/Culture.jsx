@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import "./culture.css";
+import React, { useEffect } from "react";
+import "./Culture.css"; // Make sure to adjust the CSS file path
 import { connect } from "react-redux";
 import { setCultureData } from "../../redux/action/action";
 import { cultureApiUrl } from "../../redux/API/api";
@@ -15,18 +15,23 @@ const Culture = ({ cultureData, setCultureData }) => {
       })
       .then((data) => {
         if (data && data.articles && Array.isArray(data.articles)) {
-          const newsWithImages = data.articles.filter(
+          const cultureWithImages = data.articles.filter(
             (item) => item.urlToImage
           );
-          setCultureData(newsWithImages);
+          setCultureData(cultureWithImages);
         } else {
-          console.error("Invalid data format received from the API.");
+          console.error("Invalid data format received from the culture API.");
+          // Optionally, set cultureData to an empty array or handle the error state
+          setCultureData([]);
         }
       })
-      .catch((error) =>
-        console.error("Error fetching culture data:", error.message)
-      );
+      .catch((error) => {
+        console.error("Error fetching culture data:", error.message);
+        // Optionally, set cultureData to an empty array or handle the error state
+        setCultureData([]);
+      });
   }, [setCultureData]);
+
 
   const handleImageError = (index) => {
     const updatedCultureData = [...cultureData];
