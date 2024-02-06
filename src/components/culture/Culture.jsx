@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from "react";
 import "./culture.css";
 import { connect } from "react-redux";
@@ -11,20 +9,19 @@ const Culture = ({ cultureData, setCultureData }) => {
     fetch(cultureApiUrl)
       .then((response) => response.json())
       .then((data) => {
-        console.log("Received data:", data);
-
-        if (data && (data.articles || (data.data && Array.isArray(data.data)))) {
-          // Use the default format if data.articles is present
-          // or if data.data is present and is an array
-          const newsWithImages = (data.articles || data.data).filter((item) => item.urlToImage);
+        if (data && data.articles) {
+          const newsWithImages = data.articles.filter(
+            (item) => item.urlToImage
+          );
           setCultureData(newsWithImages);
         } else {
-          console.error("Invalid API response format:", data);
+          console.error("Invalid data format received from the API.");
         }
       })
-      .catch((error) => console.error("Error fetching culture data:", error));
+      .catch((error) =>
+        console.error("Error fetching culture data:", error.message)
+      );
   }, [setCultureData]);
-
 
   const handleImageError = (index) => {
     const updatedCultureData = [...cultureData];
