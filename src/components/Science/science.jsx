@@ -1,5 +1,3 @@
-
-
 import React, { useEffect } from "react";
 import "./Science.css"; // Make sure to adjust the CSS file path
 import { connect } from "react-redux";
@@ -10,9 +8,14 @@ const Science = ({ scienceData, setScienceData }) => {
   useEffect(() => {
     fetch(scienceApiUrl)
       .then((response) => {
+        if (response.status === 426) {
+          throw new Error("Upgrade Required: Please check the API key or server configuration.");
+        }
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
+
         return response.json();
       })
       .then((data) => {
@@ -33,6 +36,7 @@ const Science = ({ scienceData, setScienceData }) => {
         setScienceData([]);
       });
   }, [setScienceData]);
+
 
   const handleImageError = (index) => {
     const updatedScienceData = [...scienceData];

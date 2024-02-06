@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import "./Sports.css"; // Make sure to adjust the CSS file path
 import { connect } from "react-redux";
@@ -9,9 +8,14 @@ const Sports = ({ sportsData, setSportsData }) => {
   useEffect(() => {
     fetch(sportsApiUrl)
       .then((response) => {
+        if (response.status === 426) {
+          throw new Error("Upgrade Required: Please check the API key or server configuration.");
+        }
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
+
         return response.json();
       })
       .then((data) => {
