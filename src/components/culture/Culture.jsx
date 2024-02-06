@@ -11,18 +11,24 @@ const Culture = ({ cultureData, setCultureData }) => {
     fetch(cultureApiUrl)
       .then((response) => response.json())
       .then((data) => {
+        let newsWithImages;
+
         if (data.articles) {
-          const newsWithImages = data.articles.filter(
-            (item) => item.urlToImage
-          );
-          setCultureData(newsWithImages);
+          // Use the default format if data.articles is present
+          newsWithImages = data.articles.filter((item) => item.urlToImage);
+        } else if (data.data && Array.isArray(data.data)) {
+          // Use an alternative format if data.data is present and is an array
+          newsWithImages = data.data.filter((item) => item.imageUrl);
         } else {
-          console.error("No 'articles' property found in the API response:", data);
+          console.error("Invalid API response format:", data);
+          return;
         }
+
+        setCultureData(newsWithImages);
       })
       .catch((error) => console.error("Error fetching culture data:", error));
   }, [setCultureData]);
-  
+
 
   const handleImageError = (index) => {
     const updatedCultureData = [...cultureData];
